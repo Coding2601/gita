@@ -1,0 +1,11 @@
+<html>
+    <head>
+        <title>Account Activation</title>
+    </head>
+    <body>
+        <h1>Account Activation</h1>
+        <p>Hi {{ username }},</p>
+        <p>Click the link below to activate your account:</p>
+        <a href="{{ domain }}{% url 'verify' uidb64=uid token=token %}">Activate Account</a>
+    </body>
+</html>

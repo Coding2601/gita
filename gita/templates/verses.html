@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>
+            Bhagvad Gita
+        </title>
+    </head>
+    <body>
+        <h2>{{ name }}</h2>
+        <div>
+            <ul style="list-style: none;">
+                {% for i in range(1,) %}
+                    <h3>{{ slok }}</h3>
+                    <p>{{ verse }}</p>
+                {% endfor %}
+            </ul>
+        </div>
+    </body>
+</html>

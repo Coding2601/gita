@@ -1,0 +1,13 @@
+{
+    "builds": [{
+        "src": "gita/wsgi.py",
+        "use": "@verce/python",
+        "config": { "maxLambdaSize": "15mb", "runtime": "python3.10"}
+    }],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "gita/wsgi.py"
+        }
+    ]
+}

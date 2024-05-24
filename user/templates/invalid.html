@@ -1,0 +1,37 @@
+{% load static %}
+<html>
+    <head>
+        <title>Account Verified</title>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            div{
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin-top: 5px;
+            }
+            h1{
+                font-size: 50px;
+                font-weight: 550;
+                margin-bottom: 35px;
+            }
+            p{
+                font-size: 30px;
+            }
+            img{
+                width: 30%;
+                margin-left: 34.5%;
+            }
+        </style>
+    </head>
+    <body>
+        <img src="{% static 'user/cross.jpg' %}" alt="cross logo">
+        <div>
+            <h1>Not Verified</h1>
+            <p>Your account has not been verified. You cannot login.</p>
+        </div>
+    </body>
+</html>
