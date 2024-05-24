@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bzr=zp37=np#oqwxenxk6+=^ei8zen7$1+*evp106(bwiws71c'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG =  os.environ.get('DEBUG', 'False').lower() == "true"
 
-ALLOWED_HOSTS = ['*', 'localhost', '.vercel.app']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(" ")
 
 
 # Application definition
@@ -129,5 +130,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'shivamkmishra9@gmail.com'
-EMAIL_HOST_PASSWORD = 'jcpvtmttozqklmjp'
+EMAIL_HOST_USER = '<YOUR_EMAIL>'
+EMAIL_HOST_PASSWORD = '<YOUR_PASSWORD>'

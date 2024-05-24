@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import os
 from django.shortcuts import render
 
-file_path = "/Users/Ravi Mishra/OneDrive/Desktop/gita-backend/gita"
+#file_path = "/Users/Ravi Mishra/OneDrive/Desktop/gita-backend/gita"
 
 curr_dir = os.path.dirname(__file__)
 
