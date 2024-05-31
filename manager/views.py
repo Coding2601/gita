@@ -21,7 +21,7 @@ def update_add_bookmark(request):
             body = get_request_body(request)
             print(body)
             #username = 'shivamkmishra9'
-            response = add_bookmark(body['username'], body['data'])
+            response = add_bookmark(body['data']['username'], body['data']['data'])
             return JsonResponse({'message': response}, status=200)
         except Exception as e:
             print(e)
@@ -34,7 +34,7 @@ def update_add_favourite(request):
         #username = 'shivamkmishra9'
         body = get_request_body(request)
         print(body)
-        response = add_favourite(body['username'], body['data'])
+        response = add_favourite(body['data']['username'], body['data']['data'])
         return JsonResponse({'message': response}, status=200)
     
 @csrf_exempt
@@ -44,7 +44,7 @@ def update_remove_bookmark(request):
         #username = 'shivamkmishra9'
         body = get_request_body(request)
         print(body)
-        response = remove_bookmark(body['username'], body['data'])
+        response = remove_bookmark(body['data']['username'], body['data']['data'])
         print(response)
         return JsonResponse({'message': response}, status=200)
 
@@ -55,7 +55,7 @@ def update_remove_favourite(request):
         #username = 'shivamkmishra9'
         body = get_request_body(request)
         print(body)
-        response = remove_favourite(body['username'], body['data'])
+        response = remove_favourite(body['data']['username'], body['data']['data'])
         return JsonResponse({'message': response}, status=200)
     
 def update_get_favourite(request, username):
