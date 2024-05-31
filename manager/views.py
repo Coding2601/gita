@@ -19,6 +19,7 @@ def update_add_bookmark(request):
         #username, body = decode_jwt(request), get_request_body(request)
         try:
             body = get_request_body(request)
+            print(body)
             #username = 'shivamkmishra9'
             response = add_bookmark(body['username'], body['data'])
             return JsonResponse({'message': response}, status=200)
@@ -32,6 +33,7 @@ def update_add_favourite(request):
         #username, body = decode_jwt(request), get_request_body(request)
         #username = 'shivamkmishra9'
         body = get_request_body(request)
+        print(body)
         response = add_favourite(body['username'], body['data'])
         return JsonResponse({'message': response}, status=200)
     
@@ -41,6 +43,7 @@ def update_remove_bookmark(request):
         #username, body = decode_jwt(request), get_request_body(request)
         #username = 'shivamkmishra9'
         body = get_request_body(request)
+        print(body)
         response = remove_bookmark(body['username'], body['data'])
         print(response)
         return JsonResponse({'message': response}, status=200)
@@ -51,8 +54,8 @@ def update_remove_favourite(request):
         #username, body = decode_jwt(request), get_request_body(request)
         #username = 'shivamkmishra9'
         body = get_request_body(request)
+        print(body)
         response = remove_favourite(body['username'], body['data'])
-        print(response)
         return JsonResponse({'message': response}, status=200)
     
 def update_get_favourite(request, username):
