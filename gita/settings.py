@@ -81,7 +81,15 @@ CSRF_TRUSTED_ORIGINS = [
     'https://bhagavad-gita.netlify.app'
 ]
 CORS_ALLOW_HEADERS = [ "accept", "referer", "accept-encoding", "authorization", "content-type", "dnt", "origin", "user-agent", "x-csrftoken", "x-sessionid", "x-requested-with"]
-
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 
 WSGI_APPLICATION = 'gita.wsgi.application'
 

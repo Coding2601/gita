@@ -63,10 +63,14 @@ def register(request):
 
             db.user.insert_one(doc)
 
-            return JsonResponse({'message': 'success', 'data': serializer.data}, status=200)
+            res = JsonResponse({'message': 'success', 'data': serializer.data}, status=200)
+            res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
+            return res
         except Exception as e:
             print(e)
-            return JsonResponse({'message': 'Failed to Register'}, status=400)
+            res = JsonResponse({'message': 'Failed to Register'}, status=400)
+            res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
+            return res
     
 def verify(request, token):
     try:
@@ -107,6 +111,7 @@ def login(request):
 
         token = jwt.encode(payload, 'secret', algorithm='HS256')
         response = JsonResponse({'message': 'success'}, status=200)
+        response['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
         response.set_cookie(key='jwt', value=token, httponly=True)
         print(token)
         return response
@@ -114,19 +119,26 @@ def login(request):
 def logout(request):
     try:
         response = JsonResponse({'message': 'success'})
+        response['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
         response.delete_cookie('jwt')
         print(response)
         return response
     except Exception as e:
         print(e)
-        return JsonResponse({'message': 'Failed to logout'})
+        res = JsonResponse({'message': 'Failed to logout'})
+        res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
+        return res
 
 def protection(request):
     if request.method == 'GET':
         try:
             token = request.COOKIES.get('jwt')
             obj = protected(token)
-            return JsonResponse({'decoded': obj['decoded'], 'message': obj['message']})
+            res = JsonResponse({'decoded': obj['decoded'], 'message': obj['message']})
+            res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
+            return res
         except Exception as e:
             print(e)
-            return JsonResponse({'message': 'Invalid Token'})
+            res = JsonResponse({'message': 'Invalid Token'})
+            res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
+            return res

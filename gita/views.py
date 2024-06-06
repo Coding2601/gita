@@ -166,13 +166,17 @@ def getVerses(request, chpt_no, verse_no):
         'num_verses': num_verses,
         'chapterName': chapterName
     }
-    return JsonResponse(res)
+    response = JsonResponse(res)
+    response['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
+    return response
 
 def getChapterName(request):
     names = []
     for v in range(1, 19):
         names.append(getName(v))
-    return JsonResponse({'names': names, "length": len(names)})
+    res = JsonResponse({'names': names, "length": len(names)})
+    res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
+    return res
 
 def getRandomVerse(request):
     v = rand.randint(1,18)
@@ -189,7 +193,9 @@ def getRandomVerse(request):
         'sans_sloka': sans_sloka,
         'verse': verse
     }
-    return JsonResponse(res)
+    response = JsonResponse(res)
+    response['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
+    return response
 
 def start(request):
     return JsonResponse({'message': 'Welcome to the Bhagavad Gita API!'})
