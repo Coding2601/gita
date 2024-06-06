@@ -111,12 +111,15 @@ def login(request):
         print(token)
         return response
 
-@csrf_exempt
 def logout(request):
-    response = JsonResponse({'message': 'success'})
-    response.delete_cookie('jwt')
-    print(response)
-    return response
+    try:
+        response = JsonResponse({'message': 'success'})
+        response.delete_cookie('jwt')
+        print(response)
+        return response
+    except Exception as e:
+        print(e)
+        return JsonResponse({'message': 'Failed to logout'})
 
 def protection(request):
     if request.method == 'GET':
