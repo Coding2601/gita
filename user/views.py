@@ -136,10 +136,8 @@ def protection(request):
             token = request.COOKIES.get('jwt')
             obj = protected(token)
             res = JsonResponse({'decoded': obj['decoded'], 'message': obj['message']})
-            res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
             return res
         except Exception as e:
             print(e)
             res = JsonResponse({'message': 'Invalid Token'})
-            res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
             return res
