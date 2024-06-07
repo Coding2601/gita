@@ -118,7 +118,7 @@ def login(request):
 def logout(request):
     try:
         response = JsonResponse({'message': 'success'})
-        response.delete_cookie('jwt')
+        response.delete_cookie('jwt', samesite='None')
         print(request.COOKIES)
         return response
     except Exception as e:
