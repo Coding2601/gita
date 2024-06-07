@@ -113,6 +113,7 @@ def login(request):
         response = JsonResponse({'message': 'success'}, status=200)
         response.set_cookie(key='jwt', value=token, httponly=True, secure=True, samesite='None')
         response['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
+        response['Access-Control-Allow-Credentials'] = 'true'
         print(token)
         return response
 
