@@ -118,8 +118,8 @@ def login(request):
 def logout(request):
     try:
         response = JsonResponse({'message': 'success'})
-        response.delete_cookie('jwt', path='/', samesite='None', secure=True, domain='bhagavad-gita.netlify.app')
-        print(response)
+        response.delete_cookie('jwt')
+        print(request.COOKIES)
         return response
     except Exception as e:
         print(e)
