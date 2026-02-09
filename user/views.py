@@ -67,6 +67,7 @@ def register(request):
             res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
             return res
         except Exception as e:
+            print(list(db.user.find()))
             print(e)
             res = JsonResponse({'message': 'Failed to Register'}, status=400)
             res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
