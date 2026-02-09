@@ -6,8 +6,8 @@ from marshmallow import Schema, fields
 from gita.settings import DB_PASSWORD
 
 key = urllib.parse.quote_plus(DB_PASSWORD)
-uri = f"mongodb+srv://shivamkmishra9:{key}@music.1qhf0rm.mongodb.net/?appName=Music"
-client = MongoClient(uri, server_api=ServerApi('1'), connect=False)
+uri = f"mongodb+srv://shivam:{key}@cluster0.ar9ltk6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+client = MongoClient(uri, server_api=ServerApi('1'), connect=True)
 
 try:
     db = client.get_database('bhagavad-gita')

@@ -59,15 +59,14 @@ def register(request):
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
-            doc = build_document(serializer.data)
+            doc = build_document(obj)
 
             db.user.insert_one(doc)
 
-            res = JsonResponse({'message': 'success', 'data': serializer.data}, status=200)
+            res = JsonResponse({'message': 'success', 'data': obj}, status=200)
             res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
             return res
         except Exception as e:
-            print(list(db.user.find()))
             print(e)
             res = JsonResponse({'message': 'Failed to Register'}, status=400)
             res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
