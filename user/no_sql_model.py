@@ -3,9 +3,10 @@ from django.http import JsonResponse
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from marshmallow import Schema, fields
+from gita.settings import DB_PASSWORD
 
-key = urllib.parse.quote_plus('Shiv@123')
-uri = f"mongodb+srv://shivam:{key}@cluster0.ar9ltk6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+key = urllib.parse.quote_plus(DB_PASSWORD)
+uri = f"mongodb+srv://shivamkmishra9:{key}@music.1qhf0rm.mongodb.net/?appName=Music"
 client = MongoClient(uri, server_api=ServerApi('1'), connect=False)
 
 try:
@@ -17,7 +18,7 @@ except:
 class NoSQLUser(Schema):
     id = fields.Int()
     username = fields.Str()
-    email = fields.Email(required=True, unique=True)
+    email = fields.Email(required=True)
     password = fields.Str()
     email_token = fields.Str()
     salt = fields.Str()
