@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Google Auth – Get ID Token</title>
+  <!-- Firebase SDK (modular) -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+    // --- 🔁 REPLACE WITH YOUR FIREBASE CONFIG ---
+    const firebaseConfig = {
+  "apiKey": "AIzaSyAiUmRkyrhwLZclMQmkohjIAuHQw6QE0sA",
+  "authDomain": "myproject-42419.firebaseapp.com",
+  "projectId": "myproject-42419",
+  "storageBucket": "myproject-42419.appspot.com",
+  "messagingSenderId": "870910229378",
+  "appId": "1:870910229378:web:abfc7f609c20282de32d9b",
+  "type": "service_account"
+};
+    // --------------------------------------------
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // DOM elements
+    const signInBtn = document.getElementById('signInBtn');
+    const signOutBtn = document.getElementById('signOutBtn');
+    const tokenDisplay = document.getElementById('tokenDisplay');
+    const userInfo = document.getElementById('userInfo');
+
+    // Sign in with Google popup
+    async function signInWithGoogle() {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const idToken = await user.getIdToken();
+        displayToken(idToken, user);
+      } catch (error) {
+        // 🎯 Handle specific Firebase Auth errors
+        switch (error.code) {
+          case 'auth/popup-closed-by-user':
+            tokenDisplay.textContent = '⚠️ Sign‑in cancelled – you closed the popup.';
+            break;
+          case 'auth/popup-blocked':
+            tokenDisplay.textContent = '❌ Popup blocked. Please allow popups for this site.';
+            break;
+          case 'auth/cancelled-popup-request':
+            // Another popup already open, ignore
+            break;
+          default:
+            console.error('Sign-in error:', error);
+            tokenDisplay.textContent = `Error: ${error.message}`;
+        }
+      }
+    }
+
+    // Display token and user info
+    function displayToken(token, user) {
+      tokenDisplay.textContent = token;
+      if (user) {
+        userInfo.innerHTML = `
+          <p><strong>Name:</strong> ${user.displayName || 'N/A'}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>UID:</strong> ${user.uid}</p>
+          <p><button id="refreshTokenBtn" class="btn btn-small">⟳ Refresh token</button></p>
+        `;
+        // Add refresh token functionality
+        document.getElementById('refreshTokenBtn')?.addEventListener('click', async () => {
+          const freshToken = await user.getIdToken(true);
+          displayToken(freshToken, user);
+        });
+      }
+    }
+
+    // Sign out
+    async function signOut() {
+      try {
+        await auth.signOut();
+        tokenDisplay.textContent = '👋 Signed out successfully.';
+        userInfo.innerHTML = '';
+      } catch (error) {
+        console.error('Sign-out error:', error);
+      }
+    }
+
+    // Check auth state on page load
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const idToken = await user.getIdToken();
+        displayToken(idToken, user);
+      } else {
+        tokenDisplay.textContent = '🔒 No user signed in.';
+        userInfo.innerHTML = '';
+      }
+    });
+
+    // Event listeners
+    signInBtn.addEventListener('click', signInWithGoogle);
+    signOutBtn.addEventListener('click', signOut);
+  </script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: #4285F4;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #3367D6;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(66,133,244,0.3);
+    }
+
+    .btn-secondary {
+      background: #f1f3f4;
+      color: #5f6368;
+    }
+
+    .btn-secondary:hover {
+      background: #e8eaed;
+    }
+
+    .btn-small {
+      padding: 6px 16px;
+      font-size: 14px;
+      background: #e9ecef;
+      color: #495057;
+      margin-top: 8px;
+    }
+
+    .card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 16px;
+    }
+
+    .token-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    #tokenDisplay {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      word-break: break-all;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    #userInfo {
+      margin-top: 24px;
+      border-top: 1px solid #dee2e6;
+      padding-top: 24px;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      color: #868e96;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Firebase Google Auth</h1>
+    <p class="subtitle">Sign in with Google to generate your Firebase ID token</p>
+
+    <div class="button-group">
+      <button id="signInBtn" class="btn btn-primary">Sign in with Google</button>
+      <button id="signOutBtn" class="btn btn-secondary">Sign out</button>
+    </div>
+
+    <div class="card">
+      <div class="token-header">
+        <h3>ID Token (JWT)</h3>
+      </div>
+      <div id="tokenDisplay">🔒 No user signed in.</div>
+    </div>
+
+    <div id="userInfo"></div>
+    
+    <div class="footer-note">
+      ⚠️ Keep your ID token secret! Do not share or expose it publicly.
+    </div>
+  </div>
+</body>
+</html>

@@ -4,6 +4,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from marshmallow import Schema, fields
 from gita.settings import DB_PASSWORD
+from datetime import datetime
 
 key = urllib.parse.quote_plus(DB_PASSWORD)
 uri = f"mongodb+srv://shivam:{key}@cluster0.ar9ltk6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -17,17 +18,13 @@ except:
 
 class NoSQLUser(Schema):
     id = fields.Int()
-    username = fields.Str()
+    uid = fields.Str()
     email = fields.Email(required=True)
-    password = fields.Str()
-    email_token = fields.Str()
-    salt = fields.Str()
-    is_verified = fields.Bool()
     created_at = fields.DateTime()
     updated_at = fields.DateTime()
 
     class Meta:
-        fields = ('id', 'username', 'email', 'password', 'email_token', 'salt', 'is_verified', 'created_at', 'updated_at')
+        fields = ('id', 'uid', 'email', 'created_at', 'updated_at')
 
 def build_document(data):
     try:
@@ -42,7 +39,7 @@ def build_document(data):
     
 def get_document(username):
     try:
-        user = db.user.find_one({'username': username})
+        user = db.user.find_one({'uid': username})
         del user['_id']
         return user
     except Exception as e:
@@ -51,7 +48,7 @@ def get_document(username):
     
 def delete_document(username):
     try:
-        user = db.user.delete_one({'username': username})
+        user = db.user.delete_one({'uid': username})
     except Exception as e:
         print(e)
         return None
@@ -66,35 +63,35 @@ def update_document_verified(email_token):
     
 def add_bookmark(username, data):
     try:
-        curr_user = db.user.update_one({'username': username}, {'$addToSet': {'bookmarks': str(data)}})
+        curr_user = db.user.update_one({'uid': username}, {'$addToSet': {'bookmarks': str(data)}})
         return 'Successfully Updated'
     except Exception as e:
         return e
 
 def add_favourite(username, data):
     try:
-        curr_user = db.user.update_one({'username': username}, {'$addToSet': {'favourites': str(data)}})
+        curr_user = db.user.update_one({'uid': username}, {'$addToSet': {'favourites': str(data)}})
         return 'Successfully Updated'
     except Exception as e:
         return e
     
 def remove_bookmark(username, data):
     try:
-        curr_user = db.user.update_one({'username': username}, {'$pull': {'bookmarks': str(data)}})
+        curr_user = db.user.update_one({'uid': username}, {'$pull': {'bookmarks': str(data)}})
         return 'Successfully Updated'
     except Exception as e: 
         return e
 
 def remove_favourite(username, data):
     try:
-        curr_user = db.user.update_one({'username': username}, {'$pull': {'favourites': str(data)}})
+        curr_user = db.user.update_one({'uid': username}, {'$pull': {'favourites': str(data)}})
         return 'Successfully Removed'
     except Exception as e:
         return e
     
 def get_favourites(username):
     try:
-        curr_user = db.user.find_one({'username': username})
+        curr_user = db.user.find_one({'uid': username})
         del curr_user['_id']
         return curr_user
     except Exception as e:
@@ -102,7 +99,7 @@ def get_favourites(username):
     
 def get_bookmarks(username):
     try:
-        curr_user = db.user.find_one({'username': username})
+        curr_user = db.user.find_one({'uid': username})
         del curr_user['_id']
         return curr_user
     except Exception as e:

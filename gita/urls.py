@@ -26,5 +26,6 @@ urlpatterns = [
     path('getRandomVerse/', views.getRandomVerse, name="getRandomVerse"),
     path('user/', include('user.urls')),
     path('manager/', include('manager.urls')),
+    path('agent/', include('agent.urls')),
     path('', views.start, name="start")
 ]

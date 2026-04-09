@@ -55,9 +55,9 @@ def register(request):
 
             #utils.send_email_token(obj, email_token)
 
-            serializer = UserSerializer(data=obj)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            # serializer = UserSerializer(data=obj)
+            # serializer.is_valid(raise_exception=True)
+            # serializer.save()
 
             doc = build_document(obj)
 
@@ -72,14 +72,14 @@ def register(request):
             res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
             return res
     
-def verify(request, token):
-    try:
-        user = User.objects.get(email_token=token)
-        update_verified(email_token=token)
-        return render(request, './verified.html')
-    except Exception as e:
-        print(e)
-        return render(request, './invalid.html')
+# def verify(request, token):
+#     try:
+#         user = User.objects.get(email_token=token)
+#         update_verified(email_token=token)
+#         return render(request, './verified.html')
+#     except Exception as e:
+#         print(e)
+#         return render(request, './invalid.html')
 
 @csrf_exempt
 def login(request):
@@ -127,15 +127,15 @@ def logout(request):
         res['Access-Control-Allow-Origin'] = 'https://bhagavad-gita.netlify.app'
         return res
 
-def protection(request):
-    if request.method == 'GET':
-        try:
-            print(request.COOKIES)
-            token = request.COOKIES.get('jwt')
-            obj = protected(token)
-            res = JsonResponse({'decoded': obj['decoded'], 'message': obj['message']})
-            return res
-        except Exception as e:
-            print(e)
-            res = JsonResponse({'message': 'Invalid Token'})
-            return res
+# def protection(request):
+#     if request.method == 'GET':
+#         try:
+#             print(request.COOKIES)
+#             token = request.COOKIES.get('jwt')
+#             obj = protected(token)
+#             res = JsonResponse({'decoded': obj['decoded'], 'message': obj['message']})
+#             return res
+#         except Exception as e:
+#             print(e)
+#             res = JsonResponse({'message': 'Invalid Token'})
+#             return res

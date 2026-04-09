@@ -91,51 +91,41 @@ def getRandomSloka(request):
 
     try:
 
-        with open(os.path.join(curr_dir, f"Verses/chapter {v}/{v}.{s}.txt"), encoding="utf-8") as f:
+        with open(os.path.join(curr_dir, f"v2Verses/chapter {v}/{v}.{s}.txt"), encoding="utf-8") as f:
             verse = f.read()
 
-        with open(os.path.join(curr_dir, f"Slokas/chapter {v}/{v}.{s}.txt"), encoding="utf-8") as f:
-
+        with open(os.path.join(curr_dir, f"v2English/chapter {v}/{v}.{s}.txt"), encoding="utf-8") as f:
             slok = f.read()
 
         with open(os.path.join(curr_dir, f"Chapters/chapter {v}/{v}.txt"), encoding="utf-8") as f:
-
             name = f.read().split(".")[1]
 
     except Exception as e:
             
             return JsonResponse({'error': str(e), 'sloka': s, 'verse': v})
 
-    '''return render(request, f"{file_path}/templates/random.html", {
-        "verse": verse,
-        "slok": slok,
-        "verse_no": v,
-        "slok_no": s,
-        "name": name
-    })'''
-
-    return JsonResponse({'verse_no': v, 'slok_no': s, 'name': name, 'slok': slok, 'verse': verse})
+    return JsonResponse({'verse_no': v, 'slok_no': s, 'name': name, 'slok': slok.replace("\n", "\n\n"), 'verse': verse.replace("\n", "\n\n")})
 
 def verses(request, chpt_no):
-    return render(request, f"{file_path}/templates/verses.html", {
+    return render(request, f"{curr_dir}/templates/verses.html", {
         "chpt_no": chpt_no
     })
 
 def getVerse(chpt_no, verse_no):
     try:
-        with open(os.path.join(curr_dir, f"Verses/chapter {chpt_no}/{chpt_no}.{verse_no}.txt"), encoding="utf-8") as f:
+        with open(os.path.join(curr_dir, f"v2Verses/chapter {chpt_no}/{chpt_no}.{verse_no}.txt"), encoding="utf-8") as f:
             verse = f.read()
     except Exception as e:
         return JsonResponse({'error': str(e), 'sloka': s, 'verse': v})
-    return verse
+    return verse.replace("\n", "\n\n")
 
 def getEngSloka(chpt_no, verse_no):
     try:
-        with open(os.path.join(curr_dir, f"Slokas/chapter {chpt_no}/{chpt_no}.{verse_no}.txt"), encoding="utf-8") as f:
+        with open(os.path.join(curr_dir, f"v2English/chapter {chpt_no}/{chpt_no}.{verse_no}.txt"), encoding="utf-8") as f:
             slok = f.read()
     except Exception as e:
         return JsonResponse({'error': str(e), 'sloka': s, 'verse': v})
-    return slok
+    return slok.replace("\n", "\n\n")
 
 def getSansSloka(chpt_no, verse_no):
     try:

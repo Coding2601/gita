@@ -12,10 +12,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+dotenv.load_dotenv()
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 
 # Quick-start development settings - unsuitable for production
@@ -47,6 +49,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "user.middlewares.authmiddleware.AuthMiddleware",
+    "agent.middleware.rate_limit.RateLimitMiddleware",
+    "gita.middlewares.cachemiddleware.CacheMiddleware",
     "django.middleware.common.CommonMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -54,7 +59,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'gita.urls'
@@ -160,3 +165,6 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = '<YOUR_EMAIL>'
 EMAIL_HOST_PASSWORD = '<YOUR_PASSWORD>'
+
+# Redis configuration for rate limiting
+REDIS_URL = os.environ.get('UPSTASH_REDIS_REST_URL', 'redis://localhost:6379/0')
