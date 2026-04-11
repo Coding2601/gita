@@ -14,7 +14,7 @@ from singleton.VectorStore import VectorDB
 from singleton.Cerebras import LLM
 
 # Initialize embedding model using environment variable
-embedder = EmbeddingModel(os.environ.get("EMBEDDING_MODEL"))
+#embedder = EmbeddingModel(os.environ.get("EMBEDDING_MODEL"))
 
 # Load vector database (FAISS index + metadata JSON)
 vector_db = VectorDB('rag/gita_index.faiss', 'rag/gita_embeddings.json')
@@ -40,15 +40,16 @@ def semantic_search(request):
             return JsonResponse({"message": "Query is required"}, status=400)
 
         # Convert query text into embedding vector
-        query_vector = embedder.get_embedding(query).astype("float32")
+        #query_vector = embedder.get_embedding(query).astype("float32")
 
         # Perform similarity search in vector DB (top 3 results)
-        results = vector_db.search(query_vector, k=3)
+        #results = vector_db.search(query_vector, k=3)
 
         # Return only English slokas from results
         return JsonResponse({
             "query": query,
-            "results": [result["eng_sloka"] for result in results]
+            "results": ""
+            #"results": [result["eng_sloka"] for result in results]
         })
 
     except Exception as e:
@@ -77,15 +78,15 @@ def chat(request):
             return JsonResponse({"message": "prompt is required"}, status=400)
 
         # Convert user prompt into embedding vector
-        query_vector = embedder.get_embedding(prompt).astype("float32")
+        #query_vector = embedder.get_embedding(prompt).astype("float32")
 
         # Retrieve relevant verses as context from vector DB
-        context = [result["verse"] for result in vector_db.search(query_vector, k=3)]
+        #context = [result["verse"] for result in vector_db.search(query_vector, k=3)]
 
         # Generate response using LLM with context + system prompt
         response = llm.complete(
             user_prompt=prompt,
-            context=context,
+            #context=context,
             temperature=temperature,
             system_prompt=(
                 "You are Lord Krishna, explaining the teachings of the Bhagavad Gita "
