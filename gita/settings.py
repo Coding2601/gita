@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'manager',
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "user.middlewares.authmiddleware.AuthMiddleware",
@@ -84,7 +86,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_REPLACE_HTTPS_REFERER = True
 CSRF_TRUSTED_ORIGINS = [
-    'https://bhagavad-gita.netlify.app',
+    'https://bhagavad-gita-ai-app.netlify.app',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ]

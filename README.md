@@ -61,6 +61,27 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+## Build Script
+
+The `build.sh` script automates deployment setup:
+
+```bash
+#!/usr/bin/env bash
+pip install -r requirements.txt
+python manage.py collectstatic --noinput
+python manage.py migrate
+```
+
+**Usage:**
+```bash
+bash build.sh
+```
+
+**What it does:**
+- Installs Python dependencies from `requirements.txt`
+- Collects Django static files (`collectstatic --noinput`)
+- Applies database migrations
+
 ## Environment Variables
 
 | Variable | Required | Default | Description |
@@ -116,7 +137,8 @@ gita/
 ├── user/                      # Authentication & user management
 ├── manager/                   # Admin utilities
 ├── gita/                      # Core Django settings & middleware
-└── resources/                 # Static resources
+├── resources/                 # Static resources
+└── build.sh                   # Deployment build script
 ```
 
 ## Middleware Stack
