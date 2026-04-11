@@ -82,6 +82,40 @@ bash build.sh
 - Collects Django static files (`collectstatic --noinput`)
 - Applies database migrations
 
+## Deployment
+
+### Gunicorn Configuration
+
+The `gunicorn.conf.py` file configures the production WSGI server with settings optimized for AI workloads:
+
+```python
+# Key settings
+timeout = 120          # 2 min (increased from 30s default for slow LLM calls)
+workers = 2            # Configurable via WEB_CONCURRENCY env var
+bind = "0.0.0.0:8000"  # Port configurable via PORT env var
+```
+
+**Why increased timeout?** The `/agent/chat/` endpoint calls the Cerebras LLM API, which can take 30-60+ seconds to generate responses. Without the increased timeout, Gunicorn kills workers mid-request causing **502 errors**.
+
+**Run with Gunicorn:**
+```bash
+gunicorn gita.wsgi:application --config gunicorn.conf.py
+```
+
+**Or with environment variables:**
+```bash
+PORT=8000 WEB_CONCURRENCY=2 gunicorn gita.wsgi:application --config gunicorn.conf.py
+```
+
+### Production Checklist
+
+- [ ] Run `build.sh` to collect static files and migrate database
+- [ ] Set `DEBUG=False` in environment
+- [ ] Configure `STATIC_ROOT` for static file serving
+- [ ] Set `ALLOWED_HOSTS` with your domain
+- [ ] Configure `CSRF_TRUSTED_ORIGINS` with your frontend URL
+- [ ] Use Gunicorn with the provided config (not `runserver`)
+
 ## Environment Variables
 
 | Variable | Required | Default | Description |
@@ -95,6 +129,9 @@ bash build.sh
 | `RATE_LIMIT_BURST` | No | 15 | Burst capacity above sustained rate |
 | `SECRET_KEY` | Yes | - | Django secret key |
 | `DEBUG` | No | False | Django debug mode |
+| `PORT` | No | 8000 | Server port (Gunicorn) |
+| `WEB_CONCURRENCY` | No | 2 | Number of Gunicorn workers |
+| `LOG_LEVEL` | No | info | Gunicorn log level (debug/info/warning/error) |
 
 ## API Endpoints
 
@@ -138,7 +175,8 @@ gita/
 ├── manager/                   # Admin utilities
 ├── gita/                      # Core Django settings & middleware
 ├── resources/                 # Static resources
-└── build.sh                   # Deployment build script
+├── build.sh                   # Deployment build script
+└── gunicorn.conf.py           # Gunicorn WSGI server config
 ```
 
 ## Middleware Stack
