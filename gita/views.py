@@ -53,7 +53,7 @@ def getRandomSloka(request):
 
     verse_text, v_err = _read_file(f"v2Verses/Chapter {chapter}/{chapter}.{verse}.txt")
     sloka_text, s_err = _read_file(f"v2English/Chapter {chapter}/{chapter}.{verse}.txt")
-    name_text, n_err = _read_file(f"Chapters/Chapter {chapter}/{chapter}.txt")
+    name_text, n_err = _read_file(f"Chapters/chapter {chapter}/{chapter}.txt")
 
     errors = []
     if v_err:
@@ -119,7 +119,7 @@ def getSansSloka(chpt_no, verse_no):
         logger.error(f"Invalid sanskrit sloka request: {error}")
         return None
 
-    content, err = _read_file(f"Sanskrit Slokas/Chapter {chpt_no}/{chpt_no}.{verse_no}.txt")
+    content, err = _read_file(f"Sanskrit Slokas/chapter {chpt_no}/{chpt_no}.{verse_no}.txt")
     if err:
         logger.error(f"Error reading sanskrit sloka {chpt_no}.{verse_no}: {err}")
         return None
