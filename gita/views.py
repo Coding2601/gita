@@ -132,7 +132,7 @@ def getName(chpt_no):
         logger.error(f"Invalid chapter number: {chpt_no}")
         return None
 
-    content, err = _read_file(f"Chapters/Chapter {chpt_no}/{chpt_no}.txt")
+    content, err = _read_file(f"Chapters/chapter {chpt_no}/{chpt_no}.txt")
     if err:
         logger.error(f"Error reading chapter name {chpt_no}: {err}")
         return None
