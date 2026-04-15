@@ -3,57 +3,58 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 # Import required libraries
-import numpy as np
 import os
 import json
-from dotenv import load_dotenv
+import requests
 
-# Import custom singleton classes for embedding, vector search, and LLM
-from singleton.Embedder import EmbeddingModel
-from singleton.VectorStore import VectorDB
-from singleton.Cerebras import LLM
+# External service configuration from environment variables
+EXTERNAL_SERVICE_URL = os.environ.get("EXTERNAL_SERVICE_URL", "http://localhost:8001")
 
-# Initialize embedding model using environment variable
-#embedder = EmbeddingModel(os.environ.get("EMBEDDING_MODEL"))
 
-# Load vector database (FAISS index + metadata JSON)
-vector_db = VectorDB('rag/gita_index.faiss', 'rag/gita_embeddings.json')
-
-# Initialize LLM with model name from environment variable
-llm = LLM(model_name=os.environ.get("MODEL_NAME"))
+def _get_headers():
+    """Build headers for external service requests."""
+    return {"Content-Type": "application/json"}
 
 
 # ---------------------- SEMANTIC SEARCH API ----------------------
-@csrf_exempt  # Disable CSRF protection (use carefully in production)
+@csrf_exempt
 def semantic_search(request):
-    # Allow only POST requests
+    """
+    Proxy semantic search requests to external service.
+    Expects JSON body: {"query": "user search query"}
+    Returns: {"query": "...", "results": [...]}
+    """
     if request.method != "POST":
         return JsonResponse({"message": "Method not allowed"}, status=405)
-    
+
     try:
-        # Parse incoming JSON request body
         body = json.loads(request.body)
         query = body.get("query")
 
-        # Validate query input
         if not query:
             return JsonResponse({"message": "Query is required"}, status=400)
 
-        # Convert query text into embedding vector
-        #query_vector = embedder.get_embedding(query).astype("float32")
+        # Forward request to external semantic search endpoint
+        response = requests.post(
+            f"{EXTERNAL_SERVICE_URL}/search",
+            headers=_get_headers(),
+            json={"query": query, "k": body.get("k", 3)},
+            timeout=30
+        )
+        response.raise_for_status()
+        data = response.json()
 
-        # Perform similarity search in vector DB (top 3 results)
-        #results = vector_db.search(query_vector, k=3)
-
-        # Return only English slokas from results
         return JsonResponse({
             "query": query,
-            "results": ""
-            #"results": [result["eng_sloka"] for result in results]
+            "results": data.get("results", [])
         })
 
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({
+            "message": "Semantic search service unavailable",
+            "error": str(e)
+        }, status=503)
     except Exception as e:
-        # Handle unexpected errors
         return JsonResponse({
             "message": "Semantic search failed",
             "error": str(e)
@@ -63,48 +64,57 @@ def semantic_search(request):
 # ---------------------- CHAT API ----------------------
 @csrf_exempt
 def chat(request):
-    # Allow only POST requests
+    """
+    Proxy chat requests to external LLM service.
+    Expects JSON body: {"prompt": "...", "temperature": 0.7, "user_name": "..."}
+    Returns: {"message": "..."}
+    """
     if request.method != "POST":
         return JsonResponse({"message": "Method not allowed"}, status=405)
 
     try:
-        # Parse incoming JSON request body
         body = json.loads(request.body)
         prompt = body.get("prompt")
-        temperature = body.get("temperature")
+        temperature = body.get("temperature", 0.7)
+        user_name = body.get("user_name", "friend")
 
-        # Validate prompt input
         if not prompt:
             return JsonResponse({"message": "prompt is required"}, status=400)
 
-        # Convert user prompt into embedding vector
-        #query_vector = embedder.get_embedding(prompt).astype("float32")
-
-        # Retrieve relevant verses as context from vector DB
-        #context = [result["verse"] for result in vector_db.search(query_vector, k=3)]
-
-        # Generate response using LLM with context + system prompt
-        response = llm.complete(
-            user_prompt=prompt,
-            #context=context,
-            temperature=temperature,
-            system_prompt=(
-                "You are Lord Krishna, explaining the teachings of the Bhagavad Gita "
-                "in a simple, clear, and compassionate manner. Use the provided context "
-                "to answer the user’s question. Always address the user by their name "
-                "in your response. Respond in a natural, human-like way with warmth and empathy. "
-                "Avoid robotic phrasing. Use conversational language, gentle guidance, and "
-                "relatable analogies when helpful. Your tone should be calm, wise, and reassuring, "
-                "like a trusted mentor speaking directly to the user."
-            )
+        system_prompt = (
+            "You are Lord Krishna, explaining the teachings of the Bhagavad Gita "
+            "in a simple, clear, and compassionate manner. Use the provided context "
+            f"to answer the user's question. Always address the user by their name ({user_name}) "
+            "in your response. Respond in a natural, human-like way with warmth and empathy. "
+            "Avoid robotic phrasing. Use conversational language, gentle guidance, and "
+            "relatable analogies when helpful. Your tone should be calm, wise, and reassuring, "
+            "like a trusted mentor speaking directly to the user."
         )
 
-        # Return generated response
-        return JsonResponse({"message": str(response)}, status=200)
+        # Forward request to external chat/completion endpoint
+        response = requests.post(
+            f"{EXTERNAL_SERVICE_URL}/chat",
+            headers=_get_headers(),
+            json={
+                "prompt": prompt,
+                "temperature": temperature,
+                "system_prompt": system_prompt,
+                "context_k": body.get("context_k", 3)
+            },
+            timeout=60
+        )
+        response.raise_for_status()
+        data = response.json()
 
-    except Exception as e:
-        # Handle errors during chat processing
+        return JsonResponse({"message": data.get("response", data.get("message", ""))}, status=200)
+
+    except requests.exceptions.RequestException as e:
         return JsonResponse({
-            "message": "Semantic search failed",
+            "message": "Chat service unavailable",
+            "error": str(e)
+        }, status=503)
+    except Exception as e:
+        return JsonResponse({
+            "message": "Chat processing failed",
             "error": str(e)
         }, status=500)
