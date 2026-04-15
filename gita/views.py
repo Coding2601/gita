@@ -51,9 +51,9 @@ def getRandomSloka(request):
     chapter = rand.randint(1, 18)
     verse = rand.randint(1, no_of_verses(chapter))
 
-    verse_text, v_err = _read_file(f"v2Verses/chapter {chapter}/{chapter}.{verse}.txt")
-    sloka_text, s_err = _read_file(f"v2English/chapter {chapter}/{chapter}.{verse}.txt")
-    name_text, n_err = _read_file(f"Chapters/chapter {chapter}/{chapter}.txt")
+    verse_text, v_err = _read_file(f"v2Verses/Chapter {chapter}/{chapter}.{verse}.txt")
+    sloka_text, s_err = _read_file(f"v2English/Chapter {chapter}/{chapter}.{verse}.txt")
+    name_text, n_err = _read_file(f"Chapters/Chapter {chapter}/{chapter}.txt")
 
     errors = []
     if v_err:
@@ -91,7 +91,7 @@ def getVerse(chpt_no, verse_no):
         logger.error(f"Invalid verse request: {error}")
         return None
 
-    content, err = _read_file(f"v2Verses/chapter {chpt_no}/{chpt_no}.{verse_no}.txt")
+    content, err = _read_file(f"v2Verses/Chapter {chpt_no}/{chpt_no}.{verse_no}.txt")
     if err:
         logger.error(f"Error reading verse {chpt_no}.{verse_no}: {err}")
         return None
@@ -105,7 +105,7 @@ def getEngSloka(chpt_no, verse_no):
         logger.error(f"Invalid sloka request: {error}")
         return None
 
-    content, err = _read_file(f"v2English/chapter {chpt_no}/{chpt_no}.{verse_no}.txt")
+    content, err = _read_file(f"v2English/Chapter {chpt_no}/{chpt_no}.{verse_no}.txt")
     if err:
         logger.error(f"Error reading sloka {chpt_no}.{verse_no}: {err}")
         return None
@@ -119,7 +119,7 @@ def getSansSloka(chpt_no, verse_no):
         logger.error(f"Invalid sanskrit sloka request: {error}")
         return None
 
-    content, err = _read_file(f"Sanskrit Slokas/chapter {chpt_no}/{chpt_no}.{verse_no}.txt")
+    content, err = _read_file(f"Sanskrit Slokas/Chapter {chpt_no}/{chpt_no}.{verse_no}.txt")
     if err:
         logger.error(f"Error reading sanskrit sloka {chpt_no}.{verse_no}: {err}")
         return None
@@ -132,7 +132,7 @@ def getName(chpt_no):
         logger.error(f"Invalid chapter number: {chpt_no}")
         return None
 
-    content, err = _read_file(f"Chapters/chapter {chpt_no}/{chpt_no}.txt")
+    content, err = _read_file(f"Chapters/Chapter {chpt_no}/{chpt_no}.txt")
     if err:
         logger.error(f"Error reading chapter name {chpt_no}: {err}")
         return None
